@@ -115,7 +115,9 @@ Berikan analisis lengkap dalam bahasa Indonesia tentang perubahan ini dan dampak
       hash: string;
       message: string;
       author: string;
+      authorEmail: string;
       date: string;
+      refs?: string;
       filesChanged: string[];
     }>,
     projectContext?: string
@@ -125,39 +127,56 @@ Berikan analisis lengkap dalam bahasa Indonesia tentang perubahan ini dan dampak
       throw new Error(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds.`);
     }
 
-    const systemPrompt = `Anda adalah seorang ahli analisis proyek software yang berpengalaman dalam menganalisis dampak perubahan kode terhadap proyek secara keseluruhan.
+    const systemPrompt = `You are a software project analyst. Your task is to create a simple, numbered list of commits with their details and impact summary.
 
-Tugas Anda adalah menganalisis serangkaian commit dan memberikan ringkasan dampak terhadap proyek dalam bahasa Indonesia.
+For each commit, provide EXACTLY this format:
 
-Berikan analisis yang mencakup:
-1. Ringkasan umum perubahan yang terjadi
-2. Area utama yang terpengaruh
-3. Dampak terhadap fungsionalitas proyek
-4. Potensi risiko atau masalah
-5. Rekomendasi untuk pengembangan selanjutnya
+1. commit [full_hash] ([refs_if_any])
+Author: [Author Name] <[author_email]>
+Date:   [formatted_date]
+Summary: [A brief summary of the changes made to that commit ID. The files where the changes or additions are made will have an impact everywhere in the project.]
 
-PENTING: Dalam ringkasan, pastikan untuk menyebutkan informasi commit dengan format:
-- **Commit [hash pendek] ([tanggal])**: "[pesan commit]" - oleh [nama author]
+2. commit [full_hash] ([refs_if_any])
+Author: [Author Name] <[author_email]>
+Date:   [formatted_date]
+Summary: [A brief summary of the changes made to that commit ID. The files where the changes or additions are made will have an impact everywhere in the project.]
 
-Format jawaban dalam markdown yang rapi dan terstruktur.`;
+IMPORTANT RULES:
+- Use EXACTLY the format shown above
+- Number each commit sequentially (1, 2, 3, etc.)
+- Include the full commit hash
+- Include refs in parentheses if available (like HEAD -> master, origin/master)
+- Keep summaries concise but informative
+- Focus on the impact of file changes on the project
+- Do not add any additional text, headers, or explanations outside this format`;
 
     const commitsInfo = commits.map(commit => {
-      const formattedDate = new Date(commit.date).toLocaleString('id-ID', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+      const formattedDate = new Date(commit.date).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: '2-digit',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        second: '2-digit',
+        year: 'numeric',
+        timeZoneName: 'short'
       });
-      return `- **${commit.hash.substring(0, 8)}**: "${commit.message}" - **${commit.author}** pada ${formattedDate} - Files: ${commit.filesChanged.join(', ')}`;
-    }).join('\n');
+      
+      return `Commit: ${commit.hash}
+Author: ${commit.author} <${commit.authorEmail}>
+Date: ${formattedDate}
+Refs: ${commit.refs || 'none'}
+Message: ${commit.message}
+Files Changed: ${commit.filesChanged.join(', ')}`;
+    }).join('\n\n');
 
-    const userPrompt = `Analisis dampak proyek dari commit-commit berikut:
+    const userPrompt = `Generate a simple numbered list for the following commits:
 
-${projectContext ? `**Konteks Proyek:** ${projectContext}\n\n` : ''}**Commits yang dianalisis:**
 ${commitsInfo}
 
-Berikan analisis komprehensif tentang dampak perubahan-perubahan ini terhadap proyek secara keseluruhan dalam bahasa Indonesia.`;
+${projectContext ? `\nProject Context: ${projectContext}` : ''}
+
+Create the numbered list following the exact format specified in the system prompt.`;
 
     const messages: OpenRouterMessage[] = [
       { role: 'system', content: systemPrompt },

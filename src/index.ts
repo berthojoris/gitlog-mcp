@@ -514,7 +514,9 @@ Note: AI-powered analysis features require both --api-key and --model-id
           hash: commit.hash,
           message: commit.message,
           author: commit.author.name,
+          authorEmail: commit.author.email,
           date: commit.date,
+          refs: commit.refs,
           filesChanged: info.filesChanged
         };
       })
