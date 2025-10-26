@@ -416,6 +416,13 @@ For issues and questions:
 
 ## Changelog
 
+### Version 1.1.2 - Enhanced Documentation
+- **🌐 Language Parameter Documentation**: Added missing `--language` parameter documentation with en|id options
+- **📝 Tool Descriptions**: Fixed analyze_commit tool description to reflect configurable language support
+- **⚙️ Configuration Examples**: Updated all examples to include language parameter
+- **📁 Example Config**: Updated example-config.json to use npm package instead of local paths
+- **🔧 Source Code**: Updated tool descriptions in source code for accuracy
+
 ### Version 1.1.1 - Documentation Improvements
 - **📚 Updated Installation Instructions**: Prioritized npm installation method
 - **⚙️ Simplified Configuration**: Updated mcpServers examples to use globally installed package
