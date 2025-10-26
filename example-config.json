@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gitlogmcp": {
+      "command": "npx",
+      "args": [
+        "path/to/gitlogmcp/build/index.js",
+        "--api-key", "sk-or-v1-your-openrouter-api-key-here",
+        "--model-id", "anthropic/claude-3-sonnet",
+        "--output-dir", "./summaries",
+        "--max-commits", "100",
+        "--language", "id"
+      ]
+    }
+  }
+}
