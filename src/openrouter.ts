@@ -41,19 +41,19 @@ export class OpenRouterClient {
       throw new Error(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds.`);
     }
 
-    const systemPrompt = `Anda adalah seorang ahli analisis kode yang berpengalaman dalam menganalisis perubahan git repository. 
-Tugas Anda adalah menganalisis commit git dan memberikan ringkasan yang komprehensif dalam bahasa Indonesia.
+    const systemPrompt = `You are an experienced code analysis expert specializing in analyzing git repository changes. 
+Your task is to analyze git commits and provide comprehensive summaries in English.
 
-Berikan analisis yang mencakup:
-1. Ringkasan perubahan yang dilakukan
-2. File-file yang terpengaruh dan dampaknya
-3. Tujuan dari perubahan tersebut
-4. Potensi dampak terhadap proyek secara keseluruhan
-5. Rekomendasi atau hal-hal yang perlu diperhatikan
+Provide analysis that includes:
+1. Summary of changes made
+2. Files affected and their impact
+3. Purpose of the changes
+4. Potential impact on the overall project
+5. Recommendations or things to note
 
-Format jawaban dalam markdown yang rapi dan mudah dibaca.`;
+Format your response in clean and readable markdown.`;
 
-    const userPrompt = `Analisis commit berikut:
+    const userPrompt = `Analyze the following commit:
 
 **Commit Hash:** ${commitHash}
 **Commit Message:** ${commitMessage}
@@ -65,7 +65,7 @@ Format jawaban dalam markdown yang rapi dan mudah dibaca.`;
 ${diffContent.substring(0, 8000)} ${diffContent.length > 8000 ? '...(truncated)' : ''}
 \`\`\`
 
-Berikan analisis lengkap dalam bahasa Indonesia tentang perubahan ini dan dampaknya terhadap proyek.`;
+Provide a comprehensive analysis in English about these changes and their impact on the project.`;
 
     const messages: OpenRouterMessage[] = [
       { role: 'system', content: systemPrompt },
@@ -135,32 +135,38 @@ For each commit, provide EXACTLY this format:
 Author: [Author Name] <[author_email]>
 Date:   [formatted_date]
 Summary: [A brief summary of the changes made to that commit ID. The files where the changes or additions are made will have an impact everywhere in the project.]
+File changes: [List the files that were modified, added, or deleted in this commit]
 
 2. commit [full_hash] ([refs_if_any])
 Author: [Author Name] <[author_email]>
 Date:   [formatted_date]
 Summary: [A brief summary of the changes made to that commit ID. The files where the changes or additions are made will have an impact everywhere in the project.]
+File changes: [List the files that were modified, added, or deleted in this commit]
 
 IMPORTANT RULES:
 - Use EXACTLY the format shown above
 - Number each commit sequentially (1, 2, 3, etc.)
 - Include the full commit hash
-- Include refs in parentheses if available (like HEAD -> master, origin/master)
-- Keep summaries concise but informative
+- Include refs in parentheses if available (like HEAD -> master, origin/master, origin/HEAD)
+- If no refs available, use (none)
+- Keep summaries concise but informative in ENGLISH language only
 - Focus on the impact of file changes on the project
+- For File changes section, list the actual files that were modified/added/deleted
 - Do not add any additional text, headers, or explanations outside this format`;
 
     const commitsInfo = commits.map(commit => {
-      const formattedDate = new Date(commit.date).toLocaleDateString('en-US', {
+      const date = new Date(commit.date);
+      const formattedDate = date.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
+        day: 'numeric',
+        year: 'numeric'
+      }) + ', ' + date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
         minute: '2-digit',
         second: '2-digit',
-        year: 'numeric',
-        timeZoneName: 'short'
-      });
+        hour12: true
+      }) + ' GMT+7';
       
       return `Commit: ${commit.hash}
 Author: ${commit.author} <${commit.authorEmail}>
