@@ -1,6 +1,6 @@
 # GitLogMCP - Git Repository Analysis with AI Integration
 
-GitLogMCP is a Model Context Protocol (MCP) server that provides comprehensive git repository analysis capabilities with AI-powered insights using OpenRouter. This tool allows you to analyze git commits, track changes, and generate intelligent summaries in Indonesian.
+GitLogMCP is a Model Context Protocol (MCP) server that provides comprehensive git repository analysis capabilities with **enhanced AI-powered insights** using OpenRouter. This tool analyzes **actual code changes (diffs)** instead of just commit messages, providing meaningful insights about what your code actually does and its impact on your project.
 
 ## Features
 
@@ -12,16 +12,37 @@ GitLogMCP is a Model Context Protocol (MCP) server that provides comprehensive g
 - **Author Listing**: Complete list of contributors with commit counts
 
 ### 🤖 AI-Powered Analysis
-- **Commit Analysis**: AI-powered analysis of individual commits in Indonesian
-- **Project Impact Summary**: Generate comprehensive project impact reports
-- **Intelligent Insights**: Understand the purpose and impact of code changes
-- **Markdown Reports**: Automatically generated summary files
+- **Real Code Analysis**: AI analyzes actual code changes (diffs) instead of just commit messages
+- **Commit Analysis**: AI-powered analysis of individual commits with code impact assessment
+- **Project Impact Summary**: Generate comprehensive project impact reports based on actual code changes
+- **Intelligent Code Insights**: Understand what the code actually does and its impact on the project
+- **Functionality Analysis**: Explains features, bug fixes, refactoring, and code improvements
+- **Markdown Reports**: Automatically generated summary files with detailed code analysis
 
 ### 🔒 Security Features
 - **Input Validation**: Comprehensive validation to prevent injection attacks
 - **Path Traversal Protection**: Safe file and directory handling
 - **Rate Limiting**: Built-in API rate limiting for OpenRouter calls
 - **Secure Configuration**: Safe handling of API keys and sensitive data
+
+## 🚀 Enhanced Analysis Capabilities
+
+GitLogMCP goes beyond traditional git analysis by examining **actual code changes (diffs)** rather than just commit messages. This provides meaningful insights into what your code actually does and its impact on your project.
+
+### Key Advantages:
+- **Real Code Analysis**: Examines actual diffs, not just commit messages
+- **Impact Assessment**: Explains how changes affect project architecture and functionality
+- **Functionality Identification**: Detects features, bug fixes, refactoring, and optimizations
+- **Meaningful Insights**: Based on code analysis rather than generic text summaries
+
+### Example Output:
+```
+1. commit a1b2c3d4e5f6... (HEAD -> main, origin/main)
+Author: John Doe <john@example.com>
+Date: Sun, Oct 26, 2025, 10:27:14 AM GMT+7
+Summary: Added authentication middleware with JWT token validation and error handling. This enhances security by requiring valid tokens for protected routes and provides standardized error responses for unauthorized access attempts.
+File changes: src/middleware/auth.js, src/routes/api.js, src/utils/jwt.js
+```
 
 ## Installation
 
@@ -69,8 +90,7 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
         "--api-key", "your-openrouter-api-key",
         "--model-id", "anthropic/claude-3-sonnet",
         "--output-dir", "./summaries",
-        "--max-commits", "100",
-        "--language", "id"
+        "--max-commits", "100"
       ]
     }
   }
@@ -86,13 +106,12 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 | `--repo-path` | Path to git repository | No | Current directory |
 | `--output-dir` | Directory for summary files (auto-created if needed) | No | `./summaries` |
 | `--max-commits` | Maximum commits to process | No | `100` |
-| `--language` | Analysis language (en/id) | No | `id` |
 
 > **Note:** The output directory specified by `--output-dir` will be automatically created if it doesn't exist, including any necessary parent directories. The system also verifies write permissions after creation.
 
-### Example Configuration for Different Scenarios
+### Example Configurations
 
-#### For Claude Desktop (Windows):
+#### Basic Configuration:
 ```json
 {
   "mcpServers": {
@@ -108,7 +127,7 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 }
 ```
 
-#### With Custom Repository Path:
+#### With Custom Options:
 ```json
 {
   "mcpServers": {
@@ -118,24 +137,9 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
         "C:\\path\\to\\gitlogmcp\\build\\index.js",
         "--api-key", "sk-or-v1-your-api-key-here",
         "--model-id", "anthropic/claude-3-sonnet",
-        "--repo-path", "C:\\your\\project\\path"
-      ]
-    }
-  }
-}
-```
-
-#### For Development Environment:
-```json
-{
-  "mcpServers": {
-    "gitlogmcp": {
-      "command": "node",
-      "args": [
-        "/absolute/path/to/gitlogmcp/build/index.js",
-        "--api-key", "sk-or-v1-your-api-key-here",
-        "--model-id", "openai/gpt-4-turbo",
-        "--output-dir", "/path/to/summaries"
+        "--repo-path", "C:\\your\\project\\path",
+        "--output-dir", "C:\\summaries",
+        "--max-commits", "50"
       ]
     }
   }
@@ -186,7 +190,7 @@ Get information for commit abc123def456
 ```
 
 ### 4. `analyze_commit`
-AI-powered analysis of a commit with insights in Indonesian.
+AI-powered analysis of a commit with detailed insights.
 
 **Parameters:**
 - `commitHash` (string, required): The commit hash to analyze
@@ -219,15 +223,27 @@ List all repository authors
 ```
 
 ### 7. `generate_project_summary`
-Generate AI-powered project impact summary for recent commits.
+Generate AI-powered project impact summary with **real code analysis**. This tool analyzes actual code changes (diffs) instead of just commit messages to provide meaningful insights about what the code actually does and its impact on the project.
+
+**Enhanced Features:**
+- **Real Code Analysis**: Analyzes actual diff content, not just commit messages
+- **Code Impact Assessment**: Explains what the code changes will accomplish
+- **Functionality Analysis**: Identifies features, bug fixes, refactoring, and improvements
+- **English Language Output**: Provides summaries in English for better accessibility
 
 **Parameters:**
 - `commitCount` (number, optional): Number of recent commits to analyze (1-50, default: 10)
 - `outputFile` (string, optional): Custom filename for summary
 
+**Output Format:**
+Each commit includes:
+- Full commit hash and metadata
+- **Summary**: Real analysis of code changes and their impact (not just commit messages)
+- **File changes**: List of modified, added, or deleted files
+
 **Example:**
 ```
-Generate project summary for the last 20 commits
+Generate project summary for the last 20 commits with real code analysis
 ```
 
 ## Usage Examples
@@ -256,10 +272,16 @@ Generate project summary for the last 20 commits
    Use analyze_commit tool for commit abc123 with summary generation enabled
    ```
 
-2. **Project Impact Analysis:**
+2. **Enhanced Project Impact Analysis (Real Code Analysis):**
    ```
-   Use generate_project_summary tool to analyze the last 15 commits
+   Use generate_project_summary tool to analyze the last 15 commits with real code analysis
    ```
+   
+   **What this does:**
+   - Analyzes actual code changes (diffs) for each commit
+   - Explains what the code changes actually accomplish
+   - Identifies features, bug fixes, refactoring, and improvements
+   - Provides English language summaries based on code impact, not just commit messages
 
 3. **Author Analysis:**
    ```
@@ -272,30 +294,26 @@ The tool generates markdown files in the specified output directory:
 
 ### Commit Analysis Files
 - **Filename:** `commit-{hash}-{timestamp}.md`
-- **Content:** Detailed analysis of individual commits in Indonesian
+- **Content:** Detailed analysis of individual commits
 - **Includes:** Impact assessment, file changes, recommendations
 
 ### Project Summary Files
 - **Filename:** `project-summary-{timestamp}.md`
-- **Content:** Comprehensive project impact analysis
-- **Includes:** Overall changes, affected areas, development recommendations
+- **Content:** Comprehensive project impact analysis with **real code analysis**
+- **Enhanced Analysis:** Based on actual code changes (diffs), not just commit messages
+- **Includes:** 
+  - Real code impact assessment for each commit
+  - What the code changes actually accomplish
+  - Features, bug fixes, refactoring, and improvements identified
+  - File changes and their project impact
+  - English language summaries for better accessibility
 
-## Security Considerations
+## Security Features
 
-### Input Validation
-- All commit hashes are validated against regex patterns
-- File paths are checked for traversal attacks
-- User inputs are sanitized to prevent injection
-
-### API Security
-- OpenRouter API keys are handled securely
-- Rate limiting prevents API abuse
-- No sensitive data is logged or exposed
-
-### File System Security
-- Output directories are validated and created safely
-- File operations are restricted to designated areas
-- Path traversal protection is implemented
+GitLogMCP implements comprehensive security measures:
+- **Input Validation**: Commit hashes and file paths are validated to prevent injection attacks
+- **API Security**: Secure handling of OpenRouter API keys with built-in rate limiting
+- **File System Protection**: Safe directory operations with path traversal prevention
 
 ## Troubleshooting
 
@@ -328,24 +346,11 @@ export DEBUG=gitlogmcp:*
 
 ## Development
 
-### Building from Source
 ```bash
-npm run build
-```
-
-### Development Mode
-```bash
-npm run dev
-```
-
-### Running Tests
-```bash
-npm test
-```
-
-### Linting
-```bash
-npm run lint
+npm run build    # Build the project
+npm run dev      # Development mode
+npm test         # Run tests
+npm run lint     # Code linting
 ```
 
 ## Supported Models
@@ -384,11 +389,19 @@ For issues and questions:
 
 ## Changelog
 
+### Version 1.1.0 - Enhanced Code Analysis
+- **🚀 Real Code Analysis**: AI now analyzes actual code changes (diffs) instead of just commit messages
+- **📊 Enhanced Project Summary**: `generate_project_summary` tool provides meaningful code impact analysis
+- **🔍 Code Impact Assessment**: Explains what code changes actually accomplish in the project
+- **🛠️ Functionality Analysis**: Identifies features, bug fixes, refactoring, and optimizations
+- **🌐 English Language Output**: Project summaries now provided in English for better accessibility
+- **⚡ Improved Performance**: Increased token limits to handle larger code analysis prompts
+- **📝 Enhanced Output Format**: Structured format with real code analysis and file changes
+
 ### Version 1.0.0
 - Initial release
 - Complete MCP server implementation
 - OpenRouter integration
-- Indonesian language analysis
 - Comprehensive security features
 - Markdown report generation
 
