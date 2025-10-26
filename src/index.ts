@@ -506,7 +506,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
       throw new Error('No commits found in repository');
     }
 
-    // Get detailed info for each commit
+    // Get detailed info for each commit including diff content
     const commitDetails = await Promise.all(
       commits.map(async commit => {
         const info = await this.gitService.getCommitInfo(commit.hash);
@@ -517,7 +517,8 @@ Note: AI-powered analysis features require both --api-key and --model-id
           authorEmail: commit.author.email,
           date: commit.date,
           refs: commit.refs,
-          filesChanged: info.filesChanged
+          filesChanged: info.filesChanged,
+          diffContent: info.diff
         };
       })
     );

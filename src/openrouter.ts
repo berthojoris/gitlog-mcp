@@ -119,6 +119,7 @@ Provide a comprehensive analysis in English about these changes and their impact
       date: string;
       refs?: string;
       filesChanged: string[];
+      diffContent: string;
     }>,
     projectContext?: string
   ): Promise<string> {
@@ -127,20 +128,20 @@ Provide a comprehensive analysis in English about these changes and their impact
       throw new Error(`Rate limit exceeded. Please wait ${Math.ceil(waitTime / 1000)} seconds.`);
     }
 
-    const systemPrompt = `You are a software project analyst. Your task is to create a simple, numbered list of commits with their details and impact summary.
+    const systemPrompt = `You are a software project analyst. Your task is to analyze actual code changes (diffs) and create a simple, numbered list of commits with their details and impact summary.
 
 For each commit, provide EXACTLY this format:
 
 1. commit [full_hash] ([refs_if_any])
 Author: [Author Name] <[author_email]>
 Date:   [formatted_date]
-Summary: [A brief summary of the changes made to that commit ID. The files where the changes or additions are made will have an impact everywhere in the project.]
+Summary: [Analyze the actual code changes in the diff content. Explain WHAT THE CODE IMPACT is and WHAT THE CODE WILL DO. Focus on functionality, features, bug fixes, refactoring, etc. based on the actual code changes, not just the commit message.]
 File changes: [List the files that were modified, added, or deleted in this commit]
 
 2. commit [full_hash] ([refs_if_any])
 Author: [Author Name] <[author_email]>
 Date:   [formatted_date]
-Summary: [A brief summary of the changes made to that commit ID. The files where the changes or additions are made will have an impact everywhere in the project.]
+Summary: [Analyze the actual code changes in the diff content. Explain WHAT THE CODE IMPACT is and WHAT THE CODE WILL DO. Focus on functionality, features, bug fixes, refactoring, etc. based on the actual code changes, not just the commit message.]
 File changes: [List the files that were modified, added, or deleted in this commit]
 
 IMPORTANT RULES:
@@ -149,8 +150,11 @@ IMPORTANT RULES:
 - Include the full commit hash
 - Include refs in parentheses if available (like HEAD -> master, origin/master, origin/HEAD)
 - If no refs available, use (none)
+- ANALYZE THE ACTUAL DIFF CONTENT provided for each commit
+- Create summaries based on CODE ANALYSIS, not commit messages
+- Explain the IMPACT and FUNCTIONALITY of the code changes
 - Keep summaries concise but informative in ENGLISH language only
-- Focus on the impact of file changes on the project
+- Focus on what the code changes will accomplish in the project
 - For File changes section, list the actual files that were modified/added/deleted
 - Do not add any additional text, headers, or explanations outside this format`;
 
@@ -173,16 +177,21 @@ Author: ${commit.author} <${commit.authorEmail}>
 Date: ${formattedDate}
 Refs: ${commit.refs || 'none'}
 Message: ${commit.message}
-Files Changed: ${commit.filesChanged.join(', ')}`;
+Files Changed: ${commit.filesChanged.join(', ')}
+
+DIFF CONTENT (ANALYZE THIS):
+${commit.diffContent}
+
+---END OF DIFF---`;
     }).join('\n\n');
 
-    const userPrompt = `Generate a simple numbered list for the following commits:
+    const userPrompt = `Analyze the DIFF CONTENT for each commit and generate a simple numbered list. Focus on the actual code changes, not just the commit messages:
 
 ${commitsInfo}
 
 ${projectContext ? `\nProject Context: ${projectContext}` : ''}
 
-Create the numbered list following the exact format specified in the system prompt.`;
+IMPORTANT: Analyze the DIFF CONTENT provided for each commit to understand what the code changes actually do. Create summaries based on the actual code impact and functionality, not just the commit message. Create the numbered list following the exact format specified in the system prompt.`;
 
     const messages: OpenRouterMessage[] = [
       { role: 'system', content: systemPrompt },
@@ -192,7 +201,7 @@ Create the numbered list following the exact format specified in the system prom
     const request: OpenRouterRequest = {
       model: this.modelId,
       messages,
-      max_tokens: 1500,
+      max_tokens: 3000,
       temperature: 0.3
     };
 
