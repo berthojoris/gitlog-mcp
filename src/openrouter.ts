@@ -115,6 +115,7 @@ Berikan analisis lengkap dalam bahasa Indonesia tentang perubahan ini dan dampak
       hash: string;
       message: string;
       author: string;
+      date: string;
       filesChanged: string[];
     }>,
     projectContext?: string
@@ -135,11 +136,21 @@ Berikan analisis yang mencakup:
 4. Potensi risiko atau masalah
 5. Rekomendasi untuk pengembangan selanjutnya
 
+PENTING: Dalam ringkasan, pastikan untuk menyebutkan informasi commit dengan format:
+- **Commit [hash pendek] ([tanggal])**: "[pesan commit]" - oleh [nama author]
+
 Format jawaban dalam markdown yang rapi dan terstruktur.`;
 
-    const commitsInfo = commits.map(commit => 
-      `- **${commit.hash.substring(0, 8)}**: ${commit.message} (${commit.author}) - Files: ${commit.filesChanged.join(', ')}`
-    ).join('\n');
+    const commitsInfo = commits.map(commit => {
+      const formattedDate = new Date(commit.date).toLocaleString('id-ID', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      return `- **${commit.hash.substring(0, 8)}**: "${commit.message}" - **${commit.author}** pada ${formattedDate} - Files: ${commit.filesChanged.join(', ')}`;
+    }).join('\n');
 
     const userPrompt = `Analisis dampak proyek dari commit-commit berikut:
 
