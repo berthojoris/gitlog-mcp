@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "gitlogmcp": {
-      "command": "npx",
+      "command": "node",
       "args": [
         "path/to/gitlogmcp/build/index.js",
         "--api-key", "sk-or-v1-your-openrouter-api-key-here",

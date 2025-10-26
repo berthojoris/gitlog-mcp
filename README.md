@@ -63,7 +63,7 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 {
   "mcpServers": {
     "gitlogmcp": {
-      "command": "npx",
+      "command": "node",
       "args": [
         "path/to/gitlogmcp/build/index.js",
         "--api-key", "your-openrouter-api-key",
