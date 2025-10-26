@@ -116,6 +116,7 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 | `--repo-path` | Path to git repository | No | Current directory |
 | `--output-dir` | Directory for summary files (auto-created if needed) | No | `./summaries` |
 | `--max-commits` | Maximum commits to process | No | `100` |
+| `--language` | Analysis language (en\|id) | No | `id` |
 
 > **Note:** The output directory specified by `--output-dir` will be automatically created if it doesn't exist, including any necessary parent directories. The system also verifies write permissions after creation.
 
@@ -147,7 +148,8 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
         "--model-id", "anthropic/claude-3-sonnet",
         "--repo-path", "C:\\your\\project\\path",
         "--output-dir", "C:\\summaries",
-        "--max-commits", "50"
+        "--max-commits", "50",
+        "--language", "en"
       ]
     }
   }
@@ -163,7 +165,8 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
       "args": [
         "C:\\path\\to\\gitlogmcp\\build\\index.js",
         "--api-key", "sk-or-v1-your-api-key-here",
-        "--model-id", "anthropic/claude-3-sonnet"
+        "--model-id", "anthropic/claude-3-sonnet",
+        "--language", "id"
       ]
     }
   }
@@ -214,7 +217,7 @@ Get information for commit abc123def456
 ```
 
 ### 4. `analyze_commit`
-AI-powered analysis of a commit with detailed insights.
+AI-powered analysis of a commit with detailed insights in the configured language (English or Indonesian).
 
 **Parameters:**
 - `commitHash` (string, required): The commit hash to analyze
@@ -412,6 +415,12 @@ For issues and questions:
 3. Create an issue on the repository
 
 ## Changelog
+
+### Version 1.1.1 - Documentation Improvements
+- **📚 Updated Installation Instructions**: Prioritized npm installation method
+- **⚙️ Simplified Configuration**: Updated mcpServers examples to use globally installed package
+- **🔧 Development Setup**: Added separate development configuration section
+- **📖 Improved Documentation**: Corrected all references to use npm package instead of local paths
 
 ### Version 1.1.0 - Enhanced Code Analysis
 - **🚀 Real Code Analysis**: AI now analyzes actual code changes (diffs) instead of just commit messages

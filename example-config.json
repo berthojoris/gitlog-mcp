@@ -1,9 +1,8 @@
 {
   "mcpServers": {
     "gitlogmcp": {
-      "command": "node",
+      "command": "gitlogmcp",
       "args": [
-        "path/to/gitlogmcp/build/index.js",
         "--api-key", "sk-or-v1-your-openrouter-api-key-here",
         "--model-id", "anthropic/claude-3-sonnet",
         "--output-dir", "./summaries",

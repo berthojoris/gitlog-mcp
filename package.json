@@ -1,6 +1,6 @@
 {
   "name": "gitlogmcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "MCP server for Git repository analysis with AI-powered code change analysis using OpenRouter",
   "main": "build/index.js",
   "type": "module",

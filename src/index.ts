@@ -220,7 +220,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
         },
         {
           name: 'analyze_commit',
-          description: 'Analyze a commit using AI and generate insights in Indonesian',
+          description: 'Analyze a commit using AI and generate insights in the configured language',
           inputSchema: {
             type: 'object',
             properties: {
