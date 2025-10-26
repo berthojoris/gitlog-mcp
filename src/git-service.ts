@@ -99,7 +99,7 @@ export class GitService {
     }
 
     try {
-      let diffOptions: string[] = ['--numstat'];
+      const diffOptions: string[] = ['--numstat'];
       let diffCommand: string[] = [];
 
       if (validatedParams.commitHash) {

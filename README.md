@@ -51,9 +51,19 @@ File changes: src/middleware/auth.js, src/routes/api.js, src/utils/jwt.js
 - Git repository (the tool analyzes the current working directory)
 - OpenRouter API key and model access
 
-### Setup
+### Quick Installation (Recommended)
 
-1. **Clone or download the project:**
+Install directly from npm:
+
+```bash
+npm install -g gitlogmcp
+```
+
+### Alternative: Development Installation
+
+If you want to contribute or modify the code:
+
+1. **Clone the repository:**
 ```bash
 git clone <repository-url>
 cd gitlogmcp
@@ -69,10 +79,11 @@ npm install
 npm run build
 ```
 
-4. **Get OpenRouter API Key:**
-   - Visit [OpenRouter](https://openrouter.ai/)
-   - Create an account and get your API key
-   - Choose a model ID (e.g., `anthropic/claude-3-sonnet`, `openai/gpt-4`)
+### Get OpenRouter API Key
+
+- Visit [OpenRouter](https://openrouter.ai/)
+- Create an account and get your API key
+- Choose a model ID (e.g., `anthropic/claude-3-sonnet`, `openai/gpt-4`)
 
 ## Configuration
 
@@ -84,9 +95,8 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 {
   "mcpServers": {
     "gitlogmcp": {
-      "command": "node",
+      "command": "gitlogmcp",
       "args": [
-        "path/to/gitlogmcp/build/index.js",
         "--api-key", "your-openrouter-api-key",
         "--model-id", "anthropic/claude-3-sonnet",
         "--output-dir", "./summaries",
@@ -116,9 +126,8 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 {
   "mcpServers": {
     "gitlogmcp": {
-      "command": "node",
+      "command": "gitlogmcp",
       "args": [
-        "C:\\path\\to\\gitlogmcp\\build\\index.js",
         "--api-key", "sk-or-v1-your-api-key-here",
         "--model-id", "anthropic/claude-3-sonnet"
       ]
@@ -132,14 +141,29 @@ Add the following configuration to your MCP client (e.g., Claude Desktop):
 {
   "mcpServers": {
     "gitlogmcp": {
-      "command": "node",
+      "command": "gitlogmcp",
       "args": [
-        "C:\\path\\to\\gitlogmcp\\build\\index.js",
         "--api-key", "sk-or-v1-your-api-key-here",
         "--model-id", "anthropic/claude-3-sonnet",
         "--repo-path", "C:\\your\\project\\path",
         "--output-dir", "C:\\summaries",
         "--max-commits", "50"
+      ]
+    }
+  }
+}
+```
+
+#### Development Configuration (if installed from source):
+```json
+{
+  "mcpServers": {
+    "gitlogmcp": {
+      "command": "node",
+      "args": [
+        "C:\\path\\to\\gitlogmcp\\build\\index.js",
+        "--api-key", "sk-or-v1-your-api-key-here",
+        "--model-id", "anthropic/claude-3-sonnet"
       ]
     }
   }

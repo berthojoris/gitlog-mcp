@@ -76,28 +76,28 @@ class GitLogMCPServer {
       const value = args[i + 1];
 
       switch (key) {
-        case '--api-key':
-          configData.openRouterApiKey = value;
-          break;
-        case '--model-id':
-          configData.modelId = value;
-          break;
-        case '--repo-path':
-          configData.repositoryPath = value;
-          break;
-        case '--output-dir':
-          configData.outputDir = value;
-          break;
-        case '--max-commits':
-          configData.maxCommits = parseInt(value, 10);
-          break;
-        case '--language':
-          configData.language = value;
-          break;
-        default:
-          if (key.startsWith('--')) {
-            console.warn(`Unknown argument: ${key}`);
-          }
+      case '--api-key':
+        configData.openRouterApiKey = value;
+        break;
+      case '--model-id':
+        configData.modelId = value;
+        break;
+      case '--repo-path':
+        configData.repositoryPath = value;
+        break;
+      case '--output-dir':
+        configData.outputDir = value;
+        break;
+      case '--max-commits':
+        configData.maxCommits = parseInt(value, 10);
+        break;
+      case '--language':
+        configData.language = value;
+        break;
+      default:
+        if (key.startsWith('--')) {
+          console.warn(`Unknown argument: ${key}`);
+        }
       }
     }
 
@@ -288,35 +288,35 @@ Note: AI-powered analysis features require both --api-key and --model-id
 
       try {
         switch (name) {
-          case 'git_log':
-            return await this.handleGitLog(args);
+        case 'git_log':
+          return await this.handleGitLog(args);
           
-          case 'git_diff':
-            return await this.handleGitDiff(args);
+        case 'git_diff':
+          return await this.handleGitDiff(args);
           
-          case 'commit_info':
-            return await this.handleCommitInfo(args);
+        case 'commit_info':
+          return await this.handleCommitInfo(args);
           
-          case 'analyze_commit':
-            if (!this.openRouterClient) {
-              throw new Error('AI analysis not available. Please configure OpenRouter API key and model ID to use this feature.');
-            }
-            return await this.handleAnalyzeCommit(args);
+        case 'analyze_commit':
+          if (!this.openRouterClient) {
+            throw new Error('AI analysis not available. Please configure OpenRouter API key and model ID to use this feature.');
+          }
+          return await this.handleAnalyzeCommit(args);
           
-          case 'repository_stats':
-            return await this.handleRepositoryStats();
+        case 'repository_stats':
+          return await this.handleRepositoryStats();
           
-          case 'list_authors':
-            return await this.handleListAuthors();
+        case 'list_authors':
+          return await this.handleListAuthors();
           
-          case 'generate_project_summary':
-            if (!this.openRouterClient) {
-              throw new Error('AI analysis not available. Please configure OpenRouter API key and model ID to use this feature.');
-            }
-            return await this.handleGenerateProjectSummary(args);
+        case 'generate_project_summary':
+          if (!this.openRouterClient) {
+            throw new Error('AI analysis not available. Please configure OpenRouter API key and model ID to use this feature.');
+          }
+          return await this.handleGenerateProjectSummary(args);
           
-          default:
-            throw new Error(`Unknown tool: ${name}`);
+        default:
+          throw new Error(`Unknown tool: ${name}`);
         }
       } catch (error) {
         return {
@@ -387,7 +387,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
     const { commitHash } = args;
     const commitInfo = await this.gitService.getCommitInfo(commitHash);
 
-    const content = `# Commit Information\n\n` +
+    const content = '# Commit Information\n\n' +
       `**Hash:** ${commitInfo.hash}\n` +
       `**Author:** ${commitInfo.author.name} <${commitInfo.author.email}>\n` +
       `**Date:** ${commitInfo.date}\n` +
@@ -457,7 +457,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
   private async handleRepositoryStats() {
     const stats = await this.gitService.getRepositoryStats();
 
-    const content = `# Repository Statistics\n\n` +
+    const content = '# Repository Statistics\n\n' +
       `**Total Commits:** ${stats.totalCommits}\n` +
       `**Total Authors:** ${stats.totalAuthors}\n` +
       `**First Commit:** ${stats.firstCommit}\n` +
@@ -478,7 +478,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
   private async handleListAuthors() {
     const authors = await this.gitService.getAuthors();
 
-    const content = `# Repository Authors\n\n` +
+    const content = '# Repository Authors\n\n' +
       authors.map((author, index) => 
         `${index + 1}. **${author.name}** <${author.email}> - ${author.commits} commits`
       ).join('\n');
@@ -534,7 +534,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
       const filename = outputFile || `project-summary-${Date.now()}`;
       const filepath = path.join(this.config.outputDirectory, `${filename}.md`);
       
-      const summaryContent = `# Ringkasan Dampak Proyek\n\n` +
+      const summaryContent = '# Ringkasan Dampak Proyek\n\n' +
         `**Tanggal:** ${new Date().toLocaleString('id-ID')}\n` +
         `**Commits Dianalisis:** ${commitCount}\n` +
         `**Repository:** ${this.gitService.getRepositoryPath()}\n\n` +

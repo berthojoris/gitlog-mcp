@@ -104,7 +104,7 @@ export const GitLogParamsSchema = z.object({
   }
   return true;
 }, {
-  message: "Invalid date format in since or until parameters"
+  message: 'Invalid date format in since or until parameters'
 });
 
 /**
@@ -123,7 +123,7 @@ export const GitDiffParamsSchema = z.object({
   
   return true;
 }, {
-  message: "Invalid commit hash format"
+  message: 'Invalid commit hash format'
 });
 
 /**
@@ -131,13 +131,13 @@ export const GitDiffParamsSchema = z.object({
  */
 export const AnalyzeCommitParamsSchema = z.object({
   commitHash: z.string().refine(isValidCommitHash, {
-    message: "Invalid commit hash format"
+    message: 'Invalid commit hash format'
   }),
   generateSummary: z.boolean().optional(),
   outputFile: z.string().optional().refine(filename => {
     return !filename || isValidFilename(filename);
   }, {
-    message: "Invalid output filename"
+    message: 'Invalid output filename'
   })
 });
 
