@@ -9,14 +9,35 @@ import fs from 'fs-extra';
 
 // Regex patterns for validation
 const COMMIT_HASH_PATTERN = /^[a-f0-9]{7,40}$/i;
+const GIT_REFERENCE_PATTERN = /^[a-zA-Z0-9._/-]+$/; // For HEAD, branch names, tags
 const SAFE_FILENAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 const SAFE_PATH_PATTERN = /^[a-zA-Z0-9._/-]+$/;
 
 /**
- * Validates if a string is a valid git commit hash
+ * Validates if a string is a valid git commit hash or reference
  */
 export function isValidCommitHash(hash: string): boolean {
-  return typeof hash === 'string' && COMMIT_HASH_PATTERN.test(hash);
+  if (typeof hash !== 'string' || hash.length === 0) {
+    return false;
+  }
+  
+  // Allow common Git references
+  const commonRefs = ['HEAD', 'ORIG_HEAD', 'FETCH_HEAD', 'MERGE_HEAD'];
+  if (commonRefs.includes(hash)) {
+    return true;
+  }
+  
+  // Allow commit hashes (7-40 hex characters)
+  if (COMMIT_HASH_PATTERN.test(hash)) {
+    return true;
+  }
+  
+  // Allow branch names, tags, and other references (basic validation)
+  if (hash.length <= 100 && GIT_REFERENCE_PATTERN.test(hash)) {
+    return true;
+  }
+  
+  return false;
 }
 
 /**

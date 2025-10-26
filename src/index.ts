@@ -212,8 +212,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
             properties: {
               commitHash: {
                 type: 'string',
-                description: 'The commit hash to get information for',
-                pattern: '^[a-f0-9]{7,40}$'
+                description: 'The commit hash or reference (e.g., HEAD, branch name) to get information for'
               }
             },
             required: ['commitHash']
@@ -227,8 +226,7 @@ Note: AI-powered analysis features require both --api-key and --model-id
             properties: {
               commitHash: {
                 type: 'string',
-                description: 'The commit hash to analyze',
-                pattern: '^[a-f0-9]{7,40}$'
+                description: 'The commit hash or reference (e.g., HEAD, branch name) to analyze'
               },
               generateSummary: {
                 type: 'boolean',

@@ -157,8 +157,9 @@ export class GitService {
    * Gets detailed information about a specific commit
    */
   async getCommitInfo(commitHash: string): Promise<GitCommit & { filesChanged: string[]; diff: string }> {
-    if (!isValidCommitHash(commitHash)) {
-      throw new Error('Invalid commit hash format');
+    // Allow HEAD and other git references in addition to commit hashes
+    if (!isValidCommitHash(commitHash) && commitHash !== 'HEAD' && !commitHash.match(/^[a-zA-Z0-9_\-\/]+$/)) {
+      throw new Error('Invalid commit hash or reference format');
     }
 
     if (!await this.isGitRepository()) {
@@ -166,42 +167,60 @@ export class GitService {
     }
 
     try {
-      // Get commit information
-      const logResult = await this.git.log({
-        maxCount: 1,
-        from: commitHash,
-        to: commitHash,
-        format: {
-          hash: '%H',
-          date: '%ai',
-          message: '%B',
-          author_name: '%an',
-          author_email: '%ae',
-          refs: '%D'
-        }
-      });
-
-      if (logResult.all.length === 0) {
+      // Get commit information - use git log with specific commit
+      const logResult = await this.git.raw(['log', '-1', '--pretty=format:%H|%ai|%B|%an|%ae|%D', commitHash]);
+      
+      if (!logResult.trim()) {
         throw new Error('Commit not found');
       }
 
-      const commit = logResult.all[0];
+      const parts = logResult.trim().split('|');
+      if (parts.length < 6) {
+        throw new Error('Invalid commit format');
+      }
+
+      const commit = {
+        hash: parts[0],
+        date: parts[1],
+        message: parts[2].trim(),
+        author: {
+          name: parts[3],
+          email: parts[4]
+        },
+        refs: parts[5] || ''
+      };
 
       // Get files changed in this commit
-      const filesResult = await this.git.diff(['--name-only', commitHash + '^', commitHash]);
-      const filesChanged = filesResult.split('\n').filter(file => file.trim());
-
-      // Get diff for this commit
-      const diffResult = await this.git.diff([commitHash + '^', commitHash]);
+      let filesChanged: string[] = [];
+      let diffResult = '';
+      
+      try {
+        // Try to get diff with parent commit
+        const filesResult = await this.git.diff(['--name-only', commitHash + '^', commitHash]);
+        filesChanged = filesResult.split('\n').filter(file => file.trim());
+        
+        // Get diff for this commit
+        diffResult = await this.git.diff([commitHash + '^', commitHash]);
+      } catch (error) {
+        // Handle initial commit (no parent)
+        try {
+          const filesResult = await this.git.raw(['show', '--name-only', '--pretty=format:', commitHash]);
+          filesChanged = filesResult.split('\n').filter(file => file.trim());
+          
+          // Get diff for initial commit
+          diffResult = await this.git.raw(['show', commitHash]);
+        } catch (showError) {
+          // Fallback: empty arrays for problematic commits
+          filesChanged = [];
+          diffResult = 'Unable to retrieve diff for this commit';
+        }
+      }
 
       return {
         hash: commit.hash,
         date: commit.date,
-        message: commit.message.trim(),
-        author: {
-          name: commit.author_name,
-          email: commit.author_email
-        },
+        message: commit.message,
+        author: commit.author,
         refs: commit.refs,
         filesChanged,
         diff: diffResult
